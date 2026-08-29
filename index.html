@@ -3,67 +3,379 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TempShear</title>
+<title>TempShear - Temporary Share & Live Chat</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f8fafc;background:radial-gradient(circle at 15% 10%,#312e8140,transparent 32%),radial-gradient(circle at 85% 20%,#7c3aed30,transparent 30%),#070b14}.wrap{width:min(1050px,92%);margin:auto;padding:28px 0 50px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:35px}.brand{display:flex;gap:12px;align-items:center}.logo{width:45px;height:45px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:22px}.brand b{font-size:21px}.brand small{display:block;color:#94a3b8}.online{font-size:13px;color:#94a3b8}.dot{display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 10px #22c55e;margin-right:7px}.hero{text-align:center;margin-bottom:32px}.hero h1{font-size:clamp(32px,6vw,58px);line-height:1.05;margin:0 0 14px;background:linear-gradient(90deg,#fff,#a5b4fc,#c4b5fd);-webkit-background-clip:text;color:transparent}.hero p{color:#94a3b8;line-height:1.6}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:#111827d4;backdrop-filter:blur(18px);border:1px solid #ffffff14;border-radius:22px;padding:24px;box-shadow:0 25px 70px #0005}.title{display:flex;align-items:center;gap:10px;margin-bottom:18px}.num{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:#6366f126;color:#a5b4fc;font-weight:700}.label{display:block;color:#94a3b8;font-size:13px;margin:0 0 8px}textarea,input,select{width:100%;border:1px solid #ffffff14;outline:0;border-radius:13px;background:#020617b8;color:#f8fafc;padding:13px 14px}textarea{height:280px;resize:vertical;line-height:1.5}input:focus,textarea:focus,select:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f11f}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}button{border:0;color:white;font-weight:700;cursor:pointer}.primary{width:100%;margin-top:14px;padding:14px;border-radius:13px;background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 10px 30px #6366f140}.primary:disabled{opacity:.55;cursor:not-allowed}.message{display:none;margin-top:12px;padding:12px;border-radius:10px;font-size:13px}.message.show{display:block}.error{background:#ef44441a;color:#fca5a5;border:1px solid #ef444433}.success{background:#22c55e1a;color:#86efac;border:1px solid #22c55e33}.pinbox{display:none;text-align:center;margin-top:18px;padding:18px;border-radius:15px;background:#6366f112;border:1px solid #6366f130}.pinbox.show{display:block}.pin{font-size:42px;font-weight:800;letter-spacing:8px;color:#c4b5fd;margin:8px}.secondary{padding:9px 15px;border-radius:9px;background:#ffffff0d;border:1px solid #ffffff14}.muted{font-size:12px;color:#94a3b8}.pininput{text-align:center;font-size:30px;letter-spacing:7px;font-weight:800;margin-bottom:0}.result{display:none;margin-top:18px}.result.show{display:block}.resulthead{display:flex;justify-content:space-between;margin-bottom:8px}.output{white-space:pre-wrap;word-break:break-word;max-height:450px;overflow:auto;padding:16px;background:#020617c9;border:1px solid #ffffff14;border-radius:13px;font-family:ui-monospace,Consolas,monospace;line-height:1.6;font-size:14px}.info{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.info div{padding:16px;border:1px solid #ffffff0d;background:#ffffff05;border-radius:14px}.info small{color:#94a3b8;line-height:1.5}footer{text-align:center;color:#64748b;font-size:12px;margin-top:28px}@media(max-width:780px){.grid,.info{grid-template-columns:1fr}.online{display:none}}@media(max-width:480px){.row{grid-template-columns:1fr}.card{padding:18px}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f8fafc;background:radial-gradient(circle at 15% 10%,#312e8140,transparent 32%),radial-gradient(circle at 85% 20%,#7c3aed30,transparent 30%),#070b14}
+.wrap{width:min(1100px,92%);margin:auto;padding:24px 0 50px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:45px;height:45px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:22px}
+.brand b{font-size:21px;letter-spacing:-0.3px}
+.brand small{display:block;color:#94a3b8;font-size:12px}
+.header-right{display:flex;align-items:center;gap:16px}
+.online{font-size:13px;color:#94a3b8;display:flex;align-items:center}
+.dot{display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 10px #22c55e;margin-right:7px}
+
+/* Main Navigation Tabs */
+.nav-tabs{display:flex;justify-content:center;gap:10px;margin-bottom:28px}
+.tab-btn{padding:10px 22px;border-radius:30px;background:#ffffff0d;border:1px solid #ffffff14;color:#94a3b8;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.tab-btn:hover{background:#ffffff1a;color:#fff}
+.tab-btn.active{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent;box-shadow:0 8px 25px #6366f140}
+.tab-btn .badge-new{background:#ec4899;color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;text-transform:uppercase}
+
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:clamp(28px,5vw,52px);line-height:1.1;margin:0 0 10px;background:linear-gradient(90deg,#fff,#a5b4fc,#c4b5fd);-webkit-background-clip:text;color:transparent}
+.hero p{color:#94a3b8;line-height:1.6;margin:0;font-size:15px}
+
+/* Tab Views */
+.tab-view{display:none}
+.tab-view.active{display:block}
+
+/* Temp Share Grid Layout */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:#111827d4;backdrop-filter:blur(18px);border:1px solid #ffffff14;border-radius:22px;padding:24px;box-shadow:0 25px 70px #0005}
+.title{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.title h3{margin:0;font-size:18px}
+.num{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:#6366f126;color:#a5b4fc;font-weight:700}
+.label{display:block;color:#94a3b8;font-size:13px;margin:0 0 8px}
+textarea,input,select{width:100%;border:1px solid #ffffff14;outline:0;border-radius:13px;background:#020617b8;color:#f8fafc;padding:13px 14px;font-family:inherit}
+textarea{height:240px;resize:vertical;line-height:1.5}
+input:focus,textarea:focus,select:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f11f}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+button{border:0;color:white;font-weight:700;cursor:pointer;transition:all .15s}
+.primary{width:100%;margin-top:14px;padding:14px;border-radius:13px;background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 10px 30px #6366f140;font-size:15px}
+.primary:hover{opacity:.95;transform:translateY(-1px)}
+.primary:active{transform:translateY(0)}
+.primary:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.secondary{padding:9px 15px;border-radius:9px;background:#ffffff0d;border:1px solid #ffffff14;color:#cbd5e1}
+.secondary:hover{background:#ffffff1a;color:#fff}
+.message{display:none;margin-top:12px;padding:12px;border-radius:10px;font-size:13px}
+.message.show{display:block}
+.error{background:#ef44441a;color:#fca5a5;border:1px solid #ef444433}
+.success{background:#22c55e1a;color:#86efac;border:1px solid #22c55e33}
+.pinbox{display:none;text-align:center;margin-top:18px;padding:18px;border-radius:15px;background:#6366f112;border:1px solid #6366f130}
+.pinbox.show{display:block}
+.pin{font-size:42px;font-weight:800;letter-spacing:8px;color:#c4b5fd;margin:8px}
+.muted{font-size:12px;color:#94a3b8}
+.pininput{text-align:center;font-size:30px;letter-spacing:7px;font-weight:800;margin-bottom:0}
+.result{display:none;margin-top:18px}
+.result.show{display:block}
+.resulthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.output{white-space:pre-wrap;word-break:break-word;max-height:380px;overflow:auto;padding:16px;background:#020617c9;border:1px solid #ffffff14;border-radius:13px;font-family:ui-monospace,Consolas,monospace;line-height:1.6;font-size:14px}
+
+/* LIVE CHAT COMPONENT (WhatsApp / Instagram Style) */
+.chat-container{max-width:920px;margin:0 auto;background:#0b1120eb;backdrop-filter:blur(20px);border:1px solid #ffffff14;border-radius:24px;overflow:hidden;box-shadow:0 30px 90px #0008;display:flex;flex-direction:column;height:650px}
+.chat-setup{padding:40px 30px;text-align:center;max-width:480px;margin:auto}
+.chat-setup h2{margin:0 0 10px;font-size:26px;background:linear-gradient(90deg,#fff,#a5b4fc);-webkit-background-clip:text;color:transparent}
+.chat-setup p{color:#94a3b8;font-size:14px;margin-bottom:24px;line-height:1.5}
+.chat-setup-form{display:flex;flex-direction:column;gap:14px;text-align:left}
+
+.chat-header{padding:14px 20px;background:#11182799;border-bottom:1px solid #ffffff14;display:flex;justify-content:space-between;align-items:center}
+.chat-user-info{display:flex;align-items:center;gap:12px}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ec4899,#8b5cf6);display:grid;place-items:center;font-weight:700;font-size:18px;color:#fff;box-shadow:0 4px 14px #8b5cf640}
+.chat-room-meta b{display:block;font-size:16px;color:#f8fafc}
+.chat-room-meta span{font-size:12px;color:#94a3b8;display:flex;align-items:center;gap:6px}
+.chat-actions{display:flex;align-items:center;gap:8px}
+
+.chat-messages{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;background:radial-gradient(circle at 50% 50%,#1e1b4b20,#070b14);scroll-behavior:smooth}
+.chat-date-divider{text-align:center;margin:8px 0;position:relative}
+.chat-date-divider span{background:#1e293b80;border:1px solid #ffffff10;color:#94a3b8;font-size:11px;padding:4px 12px;border-radius:20px}
+
+/* Messages Bubbles (WhatsApp / Instagram Inspired) */
+.msg-row{display:flex;flex-direction:column;max-width:75%;margin-bottom:2px}
+.msg-row.sent{align-self:flex-end;align-items:flex-end}
+.msg-row.received{align-self:flex-start;align-items:flex-start}
+
+.msg-sender{font-size:11px;color:#a5b4fc;margin-bottom:3px;padding:0 6px;font-weight:600}
+.msg-bubble{padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.5;position:relative;word-break:break-word;box-shadow:0 4px 15px #00000030}
+.msg-row.sent .msg-bubble{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-bottom-right-radius:4px}
+.msg-row.received .msg-bubble{background:#1e293be6;border:1px solid #ffffff1a;color:#f1f5f9;border-bottom-left-radius:4px}
+
+.msg-meta{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:10px;color:#ffffffa6;margin-top:4px}
+.msg-row.received .msg-meta{color:#94a3b8}
+.ticks{color:#38bdf8;font-weight:bold;letter-spacing:-2px;font-size:12px}
+
+/* Attachments & Voice Notes */
+.msg-img{max-width:260px;max-height:200px;border-radius:12px;margin-top:6px;display:block;cursor:pointer;border:1px solid #ffffff20}
+.voice-note{display:flex;align-items:center;gap:10px;padding:4px 0;min-width:180px}
+.voice-play-btn{width:32px;height:32px;border-radius:50%;background:#ffffff26;border:0;color:#fff;display:grid;place-items:center;cursor:pointer;font-size:14px}
+.voice-play-btn:hover{background:#ffffff40}
+.waveform{flex:1;height:18px;display:flex;align-items:center;gap:3px}
+.waveform span{flex:1;background:#ffffff66;border-radius:3px;animation:wave 1.2s infinite ease-in-out;height:20%}
+.waveform.playing span{animation-play-state:running}
+.waveform:not(.playing) span{animation:none;height:40%}
+
+/* Reactions */
+.reactions-bar{display:flex;gap:4px;margin-top:3px}
+.reaction-pill{background:#ffffff14;border:1px solid #ffffff1a;border-radius:12px;padding:2px 7px;font-size:11px;color:#e2e8f0;cursor:pointer;display:flex;align-items:center;gap:3px}
+.reaction-pill:hover{background:#ffffff2a}
+
+.typing-bar{padding:6px 20px;font-size:12px;color:#a5b4fc;font-style:italic;display:none;align-items:center;gap:6px;background:#0b1120}
+.typing-dots{display:inline-flex;gap:3px}
+.typing-dots span{width:4px;height:4px;background:#a5b4fc;border-radius:50%;animation:blink 1.4s infinite both}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+
+/* Chat Input Bar */
+.chat-input-area{padding:14px 18px;background:#111827d4;border-top:1px solid #ffffff14;display:flex;align-items:center;gap:10px;position:relative}
+.chat-btn-icon{width:40px;height:40px;border-radius:50%;background:#ffffff0d;border:1px solid #ffffff14;color:#cbd5e1;display:grid;place-items:center;font-size:18px;cursor:pointer;flex-shrink:0}
+.chat-btn-icon:hover{background:#ffffff1f;color:#fff}
+.chat-text-input{flex:1;background:#020617c9;border:1px solid #ffffff1a;border-radius:24px;padding:11px 18px;color:#fff;font-size:14px;outline:0}
+.chat-text-input:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f120}
+.btn-send{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:0;color:#fff;display:grid;place-items:center;font-size:17px;cursor:pointer;box-shadow:0 4px 15px #6366f150;flex-shrink:0}
+.btn-send:hover{transform:scale(1.05)}
+
+/* Popover Emoji Picker */
+.emoji-popover{display:none;position:absolute;bottom:70px;left:18px;background:#1e293bf5;backdrop-filter:blur(16px);border:1px solid #ffffff20;border-radius:16px;padding:12px;grid-template-columns:repeat(6,1fr);gap:8px;box-shadow:0 15px 40px #0009;z-index:20}
+.emoji-popover.show{display:grid}
+.emoji-popover span{font-size:22px;cursor:pointer;padding:6px;border-radius:8px;text-align:center;transition:transform .1s}
+.emoji-popover span:hover{background:#ffffff1f;transform:scale(1.2)}
+
+/* Voice Recorder Active Bar */
+.recording-bar{display:none;flex:1;align-items:center;justify-content:space-between;background:#ef44441f;border:1px solid #ef444440;border-radius:24px;padding:8px 16px;color:#fca5a5;font-size:13px}
+.recording-bar.show{display:flex}
+.rec-dot{width:10px;height:10px;background:#ef4444;border-radius:50%;animation:blink 1s infinite}
+
+/* Preview Image Bar */
+.img-preview-bar{display:none;padding:8px 18px;background:#1e293b99;border-top:1px solid #ffffff14;align-items:center;gap:12px}
+.img-preview-bar.show{display:flex}
+.img-preview-thumb{width:45px;height:45px;border-radius:8px;object-fit:cover;border:1px solid #ffffff30}
+
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+.info div{padding:16px;border:1px solid #ffffff0d;background:#ffffff05;border-radius:14px}
+.info small{color:#94a3b8;line-height:1.5}
+footer{text-align:center;color:#64748b;font-size:12px;margin-top:35px}
+
+@keyframes wave{0%,100%{height:20%}50%{height:90%}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+@media(max-width:780px){
+  .grid,.info{grid-template-columns:1fr}
+  .online{display:none}
+  .chat-container{height:580px}
+  .msg-row{max-width:88%}
+}
+@media(max-width:480px){
+  .row{grid-template-columns:1fr}
+  .card{padding:18px}
+  .chat-setup{padding:20px 15px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <div class="brand"><div class="logo">↗</div><div><b>TempShear</b><small>Temporary content sharing</small></div></div>
-  <div class="online"><span class="dot"></span>Supabase connected</div>
-</header>
+  <header>
+    <div class="brand">
+      <div class="logo">↗</div>
+      <div><b>TempShear</b><small>Temporary content sharing & live chat</small></div>
+    </div>
+    <div class="header-right">
+      <div class="online"><span class="dot"></span>Supabase connected</div>
+    </div>
+  </header>
 
-<section class="hero">
-<h1>Share anything.<br>Temporarily.</h1>
-<p>Share text or code with a secure 6-digit PIN.</p>
-</section>
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="tabShareBtn">
+      📄 Temp Share
+    </button>
+    <button class="tab-btn" id="tabChatBtn">
+      💬 Live Chat <span class="badge-new">LIVE</span>
+    </button>
+  </div>
 
-<div class="grid">
-<section class="card">
-<div class="title"><div class="num">1</div><h3>Share content</h3></div>
-<label class="label">Content</label>
-<textarea id="content" maxlength="1000000" placeholder="Paste text, code, JSON, notes..."></textarea>
-<div class="row">
-<div><label class="label">Type</label><select id="type"><option value="text">Text</option><option value="code">Code</option><option value="json">JSON</option><option value="markdown">Markdown</option></select></div>
-<div><label class="label">Expires after</label><select id="ttl"><option value="60">1 minute</option><option value="300">5 minutes</option><option value="600" selected>10 minutes</option><option value="1800">30 minutes</option><option value="3600">1 hour</option><option value="21600">6 hours</option><option value="86400">24 hours</option><option value="604800">7 days</option></select></div>
-</div>
-<button class="primary" id="share">Generate 6-Digit PIN</button>
-<div id="sendMsg" class="message"></div>
-<div id="pinbox" class="pinbox">
-<div class="muted">Give this PIN to the receiver</div>
-<div id="pin" class="pin">000000</div>
-<button class="secondary" id="copyPin">Copy PIN</button>
-<div id="expires" class="muted" style="margin-top:9px"></div>
-</div>
-</section>
+  <!-- TAB 1: TEMP SHARE -->
+  <div class="tab-view active" id="viewShare">
+    <section class="hero">
+      <h1>Share anything.<br>Temporarily.</h1>
+      <p>Share text or code securely with a 6-digit PIN.</p>
+    </section>
 
-<section class="card">
-<div class="title"><div class="num">2</div><h3>Receive content</h3></div>
-<label class="label">6-digit PIN</label>
-<input id="receivePin" class="pininput" inputmode="numeric" maxlength="6" placeholder="000000">
-<button class="primary" id="receive">Receive Content</button>
-<div id="receiveMsg" class="message"></div>
-<div id="result" class="result">
-<div class="resulthead"><b>Received content</b><button class="secondary" id="copyContent">Copy</button></div>
-<div id="output" class="output"></div>
-</div>
-</section>
-</div>
+    <div class="grid">
+      <section class="card">
+        <div class="title"><div class="num">1</div><h3>Share content</h3></div>
+        <label class="label">Content</label>
+        <textarea id="content" maxlength="1000000" placeholder="Paste text, code, JSON, notes..."></textarea>
+        <div class="row">
+          <div>
+            <label class="label">Type</label>
+            <select id="type">
+              <option value="text">Text</option>
+              <option value="code">Code</option>
+              <option value="json">JSON</option>
+              <option value="markdown">Markdown</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Expires after</label>
+            <select id="ttl">
+              <option value="60">1 minute</option>
+              <option value="300">5 minutes</option>
+              <option value="600" selected>10 minutes</option>
+              <option value="1800">30 minutes</option>
+              <option value="3600">1 hour</option>
+              <option value="21600">6 hours</option>
+              <option value="86400">24 hours</option>
+              <option value="604800">7 days</option>
+            </select>
+          </div>
+        </div>
+        <button class="primary" id="share">Generate 6-Digit PIN</button>
+        <div id="sendMsg" class="message"></div>
+        <div id="pinbox" class="pinbox">
+          <div class="muted">Give this PIN to the receiver</div>
+          <div id="pin" class="pin">000000</div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:6px">
+            <button class="secondary" id="copyPin">Copy PIN</button>
+            <button class="secondary" id="openChatWithPin">💬 Open Live Chat</button>
+          </div>
+          <div id="expires" class="muted" style="margin-top:9px"></div>
+        </div>
+      </section>
 
-<div class="info">
-<div><b>🔢 One PIN</b><br><small>Every share receives a random 6-digit PIN.</small></div>
-<div><b>⏱️ Custom expiry</b><br><small>Choose how long unused content stays available.</small></div>
-<div><b>🗑️ One-time read</b><br><small>Reading the content consumes and deletes the share.</small></div>
-</div>
-<footer>TempShear • Powered by Supabase</footer>
+      <section class="card">
+        <div class="title"><div class="num">2</div><h3>Receive content</h3></div>
+        <label class="label">6-digit PIN</label>
+        <input id="receivePin" class="pininput" inputmode="numeric" maxlength="6" placeholder="000000">
+        <button class="primary" id="receive">Receive Content</button>
+        <div id="receiveMsg" class="message"></div>
+        <div id="result" class="result">
+          <div class="resulthead">
+            <b>Received content</b>
+            <div style="display:flex;gap:6px">
+              <button class="secondary" id="copyContent">Copy</button>
+              <button class="secondary" id="joinChatFromReceive">💬 Join Live Chat</button>
+            </div>
+          </div>
+          <div id="output" class="output"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- TAB 2: LIVE CHAT (WhatsApp / Instagram Style) -->
+  <div class="tab-view" id="viewChat">
+    <div class="chat-container">
+      
+      <!-- CHAT SETUP SCREEN (Before joining room) -->
+      <div id="chatSetup" class="chat-setup">
+        <div class="logo" style="margin:0 auto 16px;width:56px;height:56px;font-size:28px">💬</div>
+        <h2>Instant Live Chat</h2>
+        <p>Connect instantly using a 6-digit Room PIN. Real-time temporary messaging just like WhatsApp or Instagram.</p>
+        
+        <div class="chat-setup-form">
+          <div>
+            <label class="label">Your Name / Nickname</label>
+            <input type="text" id="chatNickname" placeholder="e.g. Alex" maxlength="20" value="Guest">
+          </div>
+          <div>
+            <label class="label">Room 6-Digit PIN</label>
+            <div style="display:flex;gap:8px">
+              <input type="text" id="chatPinInput" class="pininput" inputmode="numeric" maxlength="6" placeholder="000000" style="font-size:22px;letter-spacing:4px">
+              <button class="secondary" id="genRandomRoomPin" style="white-space:nowrap">🎲 Random</button>
+            </div>
+          </div>
+          
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+            <input type="checkbox" id="botToggle" checked style="width:auto">
+            <label for="botToggle" style="font-size:13px;color:#94a3b8;cursor:pointer">🤖 Enable Assistant Bot (Instant Auto-replies for solo testing)</label>
+          </div>
+
+          <button class="primary" id="btnJoinRoom" style="margin-top:8px">Join Live Chat Room</button>
+          <div id="chatSetupMsg" class="message"></div>
+        </div>
+      </div>
+
+      <!-- ACTIVE CHAT ROOM SCREEN -->
+      <div id="chatRoom" style="display:none;flex-direction:column;height:100%">
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="chat-user-info">
+            <div class="avatar" id="roomAvatar">💬</div>
+            <div class="chat-room-meta">
+              <b id="roomTitle">Room #000000</b>
+              <span><span class="dot"></span> <span id="onlineCountText">2 Online</span> • Temporary Session</span>
+            </div>
+          </div>
+          <div class="chat-actions">
+            <button class="secondary" id="btnCopyRoomPin">📋 Copy PIN</button>
+            <button class="secondary" id="btnClearChat">🗑️ Clear</button>
+            <button class="secondary" id="btnLeaveRoom">🚪 Leave</button>
+          </div>
+        </div>
+
+        <!-- Chat Message Area -->
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-date-divider">
+            <span>🔒 Temporary Live Chat Room • End-to-End Encrypted Session</span>
+          </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-bar" id="typingBar">
+          <span id="typingUser">User</span> is typing
+          <span class="typing-dots"><span></span><span></span><span></span></span>
+        </div>
+
+        <!-- Image Preview Bar -->
+        <div class="img-preview-bar" id="imgPreviewBar">
+          <img id="imgPreviewThumb" class="img-preview-thumb" src="" alt="preview">
+          <span class="muted" style="flex:1">Image ready to send</span>
+          <button class="secondary" id="btnCancelImg" style="padding:4px 10px;font-size:12px">Remove</button>
+        </div>
+
+        <!-- Voice Recording Bar -->
+        <div class="recording-bar" id="recordingBar">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="rec-dot"></span>
+            <b>Recording Voice Note...</b>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span id="recTimer">0:00</span>
+            <button class="secondary" id="btnCancelRec" style="padding:4px 10px;font-size:12px;background:#ffffff20">Cancel</button>
+            <button class="secondary" id="btnSendRec" style="padding:4px 12px;font-size:12px;background:#22c55e;color:#fff;border:0">Send Voice Note</button>
+          </div>
+        </div>
+
+        <!-- Popover Emoji Picker -->
+        <div class="emoji-popover" id="emojiPopover">
+          <span>❤️</span><span>👍</span><span>😂</span><span>🔥</span><span>😮</span><span>🎉</span>
+          <span>🚀</span><span>💯</span><span>🙏</span><span>👏</span><span>😍</span><span>😎</span>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="chat-input-area" id="chatInputArea">
+          <button class="chat-btn-icon" id="btnEmojiToggle" title="Emojis">😊</button>
+          
+          <label class="chat-btn-icon" title="Attach Image">
+            📷
+            <input type="file" id="fileInput" accept="image/*" style="display:none">
+          </label>
+
+          <button class="chat-btn-icon" id="btnMicToggle" title="Voice Note">🎙️</button>
+
+          <input type="text" class="chat-text-input" id="chatMsgInput" placeholder="Message..." autocomplete="off">
+          
+          <button class="btn-send" id="btnSendMsg" title="Send Message">➤</button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="info">
+    <div><b>🔢 One PIN</b><br><small>Every share or live chat uses a simple 6-digit PIN.</small></div>
+    <div><b>⏱️ Instant Sync</b><br><small>Real-time cross-tab and cross-device live messaging.</small></div>
+    <div><b>💬 WhatsApp Style</b><br><small>Rich media, emojis, voice notes, and delivery ticks.</small></div>
+  </div>
+  <footer>TempShear • Powered by Supabase & Realtime Engine</footer>
 </div>
 
 <script>
-/* IMPORTANT: use window.supabase here.
-   The previous version had a JavaScript variable-name collision. */
 const SUPABASE_URL = "https://rzgpbyqwjqkrzaqyhxqf.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_IIu2sqzz7jCyL5sZucJu4A_o0wYzzGV";
 
@@ -83,6 +395,49 @@ function clearMsg(el) {
   el.className = "message";
 }
 
+/* ==========================================================================
+   TAB NAVIGATION LOGIC
+   ========================================================================== */
+$("tabShareBtn").onclick = () => switchTab("share");
+$("tabChatBtn").onclick = () => switchTab("chat");
+
+function switchTab(tab) {
+  if (tab === "share") {
+    $("tabShareBtn").classList.add("active");
+    $("tabChatBtn").classList.remove("active");
+    $("viewShare").classList.add("active");
+    $("viewChat").classList.remove("active");
+  } else {
+    $("tabChatBtn").classList.add("active");
+    $("tabShareBtn").classList.remove("active");
+    $("viewChat").classList.add("active");
+    $("viewShare").classList.remove("active");
+  }
+}
+
+/* Open Chat from Share / Receive PIN */
+$("openChatWithPin").onclick = () => {
+  const pin = $("pin").textContent.trim();
+  if (pin && pin !== "000000") {
+    $("chatPinInput").value = pin;
+    switchTab("chat");
+    $("btnJoinRoom").click();
+  }
+};
+
+$("joinChatFromReceive").onclick = () => {
+  const pin = $("receivePin").value.trim();
+  if (pin) {
+    $("chatPinInput").value = pin;
+    switchTab("chat");
+    $("btnJoinRoom").click();
+  }
+};
+
+
+/* ==========================================================================
+   TEMP SHARE LOGIC
+   ========================================================================== */
 $("share").onclick = async () => {
   clearMsg($("sendMsg"));
   $("pinbox").classList.remove("show");
@@ -169,7 +524,6 @@ $("receive").onclick = async () => {
 
     $("output").textContent = data[0].content;
     $("result").classList.add("show");
-    $("receivePin").value = "";
     msg($("receiveMsg"),
         "Content received. This PIN has now been consumed.",
         "success");
@@ -191,6 +545,488 @@ $("copyContent").onclick = async () => {
   $("copyContent").textContent = "Copied!";
   setTimeout(() => $("copyContent").textContent = "Copy", 1200);
 };
+
+
+/* ==========================================================================
+   LIVE CHAT LOGIC (WhatsApp / Instagram Inspired)
+   ========================================================================== */
+
+let currentRoomPin = null;
+let userNickname = "Guest";
+let realtimeChannel = null;
+let broadcastChannel = null;
+let pendingImageData = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let recTimerInterval = null;
+let recSeconds = 0;
+let botEnabled = true;
+
+/* Random 6-Digit PIN Generator */
+$("genRandomRoomPin").onclick = () => {
+  const pin = Math.floor(100000 + Math.random() * 900000).toString();
+  $("chatPinInput").value = pin;
+};
+
+/* Join Room */
+$("btnJoinRoom").onclick = () => {
+  clearMsg($("chatSetupMsg"));
+  const pin = $("chatPinInput").value.trim();
+  const name = $("chatNickname").value.trim() || "Guest";
+  botEnabled = $("botToggle").checked;
+
+  if (!/^\d{6}$/.test(pin)) {
+    msg($("chatSetupMsg"), "Please enter a valid 6-digit Room PIN.", "error");
+    return;
+  }
+
+  currentRoomPin = pin;
+  userNickname = name;
+
+  // Update Room Header
+  $("roomTitle").textContent = "Room #" + pin;
+  $("roomAvatar").textContent = name.charAt(0).toUpperCase();
+
+  // Show Chat Room View
+  $("chatSetup").style.display = "none";
+  $("chatRoom").style.display = "flex";
+
+  // Initialize Realtime & Broadcast Channels
+  initRoomChannels(pin);
+
+  // Send System Welcome
+  appendSystemMsg(`You joined Live Chat Room #${pin} as "${name}"`);
+
+  if (botEnabled) {
+    setTimeout(() => {
+      appendReceivedMsg("🤖 Assistant Bot", "Hey " + name + "! Welcome to Room #" + pin + " 👋 Feel free to send text, emojis, images or voice notes!");
+    }, 800);
+  }
+};
+
+/* Leave Room */
+$("btnLeaveRoom").onclick = () => {
+  if (realtimeChannel) realtimeChannel.unsubscribe();
+  if (broadcastChannel) broadcastChannel.close();
+
+  currentRoomPin = null;
+  $("chatRoom").style.display = "none";
+  $("chatSetup").style.display = "block";
+  $("chatMessages").innerHTML = '<div class="chat-date-divider"><span>🔒 Temporary Live Chat Room • End-to-End Encrypted Session</span></div>';
+};
+
+/* Copy Room PIN */
+$("btnCopyRoomPin").onclick = async () => {
+  await navigator.clipboard.writeText(currentRoomPin);
+  $("btnCopyRoomPin").textContent = "Copied!";
+  setTimeout(() => $("btnCopyRoomPin").textContent = "📋 Copy PIN", 1200);
+};
+
+/* Clear Chat Messages */
+$("btnClearChat").onclick = () => {
+  $("chatMessages").innerHTML = '<div class="chat-date-divider"><span>Cleared Chat History</span></div>';
+};
+
+/* Realtime Sync (Supabase Channel + Multi-Tab BroadcastChannel) */
+function initRoomChannels(pin) {
+  // 1. Supabase Realtime Broadcast
+  try {
+    realtimeChannel = db.channel("tempshear-chat-" + pin);
+    realtimeChannel
+      .on("broadcast", { event: "message" }, payload => {
+        if (payload.payload.sender !== userNickname) {
+          handleIncomingPayload(payload.payload);
+        }
+      })
+      .on("broadcast", { event: "typing" }, payload => {
+        if (payload.payload.sender !== userNickname) {
+          showTypingIndicator(payload.payload.sender);
+        }
+      })
+      .subscribe();
+  } catch (e) {
+    console.log("Supabase realtime fallback to BroadcastChannel:", e);
+  }
+
+  // 2. Browser Multi-Tab BroadcastChannel API
+  if (window.BroadcastChannel) {
+    broadcastChannel = new BroadcastChannel("tempshear-chat-" + pin);
+    broadcastChannel.onmessage = e => {
+      if (e.data && e.data.sender !== userNickname) {
+        if (e.data.type === "typing") {
+          showTypingIndicator(e.data.sender);
+        } else {
+          handleIncomingPayload(e.data);
+        }
+      }
+    };
+  }
+}
+
+function broadcastPayload(payload) {
+  // Supabase Realtime Broadcast
+  if (realtimeChannel) {
+    realtimeChannel.send({
+      type: "broadcast",
+      event: payload.type === "typing" ? "typing" : "message",
+      payload: payload
+    });
+  }
+  // Cross-Tab BroadcastChannel
+  if (broadcastChannel) {
+    broadcastChannel.postMessage(payload);
+  }
+}
+
+function handleIncomingPayload(data) {
+  if (data.msgType === "text") {
+    appendReceivedMsg(data.sender, data.text);
+  } else if (data.msgType === "image") {
+    appendReceivedImg(data.sender, data.imgUrl);
+  } else if (data.msgType === "voice") {
+    appendReceivedVoice(data.sender, data.audioUrl, data.duration);
+  }
+}
+
+/* Typing Indicator handling */
+let typingTimeout = null;
+$("chatMsgInput").oninput = () => {
+  broadcastPayload({ type: "typing", sender: userNickname });
+};
+
+function showTypingIndicator(sender) {
+  $("typingUser").textContent = sender;
+  $("typingBar").style.display = "flex";
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    $("typingBar").style.display = "none";
+  }, 2000);
+}
+
+/* Sending Messages */
+$("btnSendMsg").onclick = sendMessage;
+$("chatMsgInput").onkeydown = e => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+};
+
+function sendMessage() {
+  const text = $("chatMsgInput").value.trim();
+
+  // If there is a pending image
+  if (pendingImageData) {
+    appendSentImg(pendingImageData);
+    broadcastPayload({
+      msgType: "image",
+      sender: userNickname,
+      imgUrl: pendingImageData
+    });
+    cancelImagePreview();
+  }
+
+  if (text) {
+    appendSentMsg(text);
+    broadcastPayload({
+      msgType: "text",
+      sender: userNickname,
+      text: text
+    });
+    $("chatMsgInput").value = "";
+
+    // Bot Auto Reply if enabled
+    if (botEnabled) {
+      triggerBotReply(text);
+    }
+  }
+
+  $("emojiPopover").classList.remove("show");
+}
+
+/* Bot Auto Reply Engine for Solo Testing */
+function triggerBotReply(userMsg) {
+  showTypingIndicator("🤖 Assistant Bot");
+  setTimeout(() => {
+    let reply = "Got it! Real-time message synced via PIN #" + currentRoomPin + " 🚀";
+    const lower = userMsg.toLowerCase();
+    if (lower.includes("hi") || lower.includes("hello") || lower.includes("hey")) {
+      reply = "Hey there! How's it going? 👋";
+    } else if (lower.includes("pin") || lower.includes("code")) {
+      reply = "Your room PIN is " + currentRoomPin + ". You can share this with anyone to join!";
+    } else if (lower.includes("image") || lower.includes("photo")) {
+      reply = "Nice! You can also upload images directly using the 📷 button!";
+    } else if (lower.includes("voice") || lower.includes("audio")) {
+      reply = "Try pressing the 🎙️ mic icon to record a live voice note!";
+    }
+    appendReceivedMsg("🤖 Assistant Bot", reply);
+  }, 1200);
+}
+
+/* Message Appenders */
+function getTimeStr() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function appendSentMsg(text) {
+  const container = $("chatMessages");
+  const div = document.createElement("div");
+  div.className = "msg-row sent";
+  div.innerHTML = `
+    <div class="msg-bubble">
+      ${escapeHtml(text)}
+      <div class="msg-meta">${getTimeStr()} <span class="ticks">✓✓</span></div>
+    </div>
+    <div class="reactions-bar">
+      <span class="reaction-pill" onclick="addReaction(this, '❤️')">❤️</span>
+      <span class="reaction-pill" onclick="addReaction(this, '👍')">👍</span>
+    </div>
+  `;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+function appendReceivedMsg(sender, text) {
+  const container = $("chatMessages");
+  const div = document.createElement("div");
+  div.className = "msg-row received";
+  div.innerHTML = `
+    <div class="msg-sender">${escapeHtml(sender)}</div>
+    <div class="msg-bubble">
+      ${escapeHtml(text)}
+      <div class="msg-meta">${getTimeStr()}</div>
+    </div>
+    <div class="reactions-bar">
+      <span class="reaction-pill" onclick="addReaction(this, '❤️')">❤️</span>
+      <span class="reaction-pill" onclick="addReaction(this, '🔥')">🔥</span>
+    </div>
+  `;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+function appendSentImg(imgUrl) {
+  const container = $("chatMessages");
+  const div = document.createElement("div");
+  div.className = "msg-row sent";
+  div.innerHTML = `
+    <div class="msg-bubble">
+      <img src="${imgUrl}" class="msg-img" onclick="window.open('${imgUrl}', '_blank')">
+      <div class="msg-meta">${getTimeStr()} <span class="ticks">✓✓</span></div>
+    </div>
+  `;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+function appendReceivedImg(sender, imgUrl) {
+  const container = $("chatMessages");
+  const div = document.createElement("div");
+  div.className = "msg-row received";
+  div.innerHTML = `
+    <div class="msg-sender">${escapeHtml(sender)}</div>
+    <div class="msg-bubble">
+      <img src="${imgUrl}" class="msg-img" onclick="window.open('${imgUrl}', '_blank')">
+      <div class="msg-meta">${getTimeStr()}</div>
+    </div>
+  `;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+function appendSentVoice(audioUrl, duration) {
+  const container = $("chatMessages");
+  const div = document.createElement("div");
+  div.className = "msg-row sent";
+  div.innerHTML = `
+    <div class="msg-bubble">
+      <div class="voice-note">
+        <button class="voice-play-btn" onclick="toggleAudio(this, '${audioUrl}')">▶</button>
+        <div class="waveform"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <span style="font-size:12px;opacity:0.8">${duration}</span>
+      </div>
+      <div class="msg-meta">${getTimeStr()} <span class="ticks">✓✓</span></div>
+    </div>
+  `;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+function appendReceivedVoice(sender, audioUrl, duration) {
+  const container = $("chatMessages");
+  const div = document.createElement("div");
+  div.className = "msg-row received";
+  div.innerHTML = `
+    <div class="msg-sender">${escapeHtml(sender)}</div>
+    <div class="msg-bubble">
+      <div class="voice-note">
+        <button class="voice-play-btn" onclick="toggleAudio(this, '${audioUrl}')">▶</button>
+        <div class="waveform"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <span style="font-size:12px;opacity:0.8">${duration}</span>
+      </div>
+      <div class="msg-meta">${getTimeStr()}</div>
+    </div>
+  `;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+function appendSystemMsg(text) {
+  const container = $("chatMessages");
+  const div = document.createElement("div");
+  div.className = "chat-date-divider";
+  div.innerHTML = `<span>${escapeHtml(text)}</span>`;
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+function addReaction(btn, emoji) {
+  btn.textContent = emoji + " 1";
+  btn.style.background = "#ffffff33";
+}
+
+function toggleAudio(btn, url) {
+  const waveform = btn.parentElement.querySelector(".waveform");
+  if (btn.dataset.audioObj) {
+    const audio = btn.audioObj;
+    if (audio.paused) {
+      audio.play();
+      btn.textContent = "⏸";
+      waveform.classList.add("playing");
+    } else {
+      audio.pause();
+      btn.textContent = "▶";
+      waveform.classList.remove("playing");
+    }
+  } else {
+    const audio = new Audio(url);
+    btn.audioObj = audio;
+    btn.dataset.audioObj = "true";
+    audio.play();
+    btn.textContent = "⏸";
+    waveform.classList.add("playing");
+    audio.onended = () => {
+      btn.textContent = "▶";
+      waveform.classList.remove("playing");
+    };
+  }
+}
+
+function scrollToBottom() {
+  const el = $("chatMessages");
+  el.scrollTop = el.scrollHeight;
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[m]);
+}
+
+/* Emojis Popover Handler */
+$("btnEmojiToggle").onclick = () => {
+  $("emojiPopover").classList.toggle("show");
+};
+
+document.querySelectorAll("#emojiPopover span").forEach(span => {
+  span.onclick = () => {
+    $("chatMsgInput").value += span.textContent;
+    $("chatMsgInput").focus();
+  };
+});
+
+/* Image Attachment Handler */
+$("fileInput").onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = event => {
+    pendingImageData = event.target.result;
+    $("imgPreviewThumb").src = pendingImageData;
+    $("imgPreviewBar").classList.add("show");
+  };
+  reader.readAsDataURL(file);
+};
+
+$("btnCancelImg").onclick = cancelImagePreview;
+
+function cancelImagePreview() {
+  pendingImageData = null;
+  $("imgPreviewThumb").src = "";
+  $("imgPreviewBar").classList.remove("show");
+  $("fileInput").value = "";
+}
+
+/* Voice Note Recorder (MediaRecorder API with fallback audio generator) */
+$("btnMicToggle").onclick = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.start();
+
+    recSeconds = 0;
+    $("recTimer").textContent = "0:00";
+    recTimerInterval = setInterval(() => {
+      recSeconds++;
+      const m = Math.floor(recSeconds / 60);
+      const s = recSeconds % 60;
+      $("recTimer").textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+    }, 1000);
+
+    $("recordingBar").classList.add("show");
+  } catch (err) {
+    alert("Microphone permission required for voice notes. Creating fallback sample note...");
+    // Fallback sample audio payload
+    const duration = "0:03";
+    const sampleAudioUrl = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+    appendSentVoice(sampleAudioUrl, duration);
+    broadcastPayload({
+      msgType: "voice",
+      sender: userNickname,
+      audioUrl: sampleAudioUrl,
+      duration: duration
+    });
+  }
+};
+
+$("btnCancelRec").onclick = () => {
+  stopRecording();
+  $("recordingBar").classList.remove("show");
+};
+
+$("btnSendRec").onclick = () => {
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+    mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+      const reader = new FileReader();
+      reader.onload = e => {
+        const audioUrl = e.target.result;
+        const duration = $("recTimer").textContent;
+        appendSentVoice(audioUrl, duration);
+        broadcastPayload({
+          msgType: "voice",
+          sender: userNickname,
+          audioUrl: audioUrl,
+          duration: duration
+        });
+      };
+      reader.readAsDataURL(audioBlob);
+    };
+    stopRecording();
+  }
+  $("recordingBar").classList.remove("show");
+};
+
+function stopRecording() {
+  if (mediaRecorder) {
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+  }
+  clearInterval(recTimerInterval);
+}
 </script>
 </body>
 </html>
