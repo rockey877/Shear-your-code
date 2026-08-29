@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TempShear</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f8fafc;background:radial-gradient(circle at 15% 10%,#312e8140,transparent 32%),radial-gradient(circle at 85% 20%,#7c3aed30,transparent 30%),#070b14}.wrap{width:min(1050px,92%);margin:auto;padding:28px 0 50px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:35px}.brand{display:flex;gap:12px;align-items:center}.logo{width:45px;height:45px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:22px}.brand b{font-size:21px}.brand small{display:block;color:#94a3b8}.online{font-size:13px;color:#94a3b8}.dot{display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 10px #22c55e;margin-right:7px}.hero{text-align:center;margin-bottom:32px}.hero h1{font-size:clamp(32px,6vw,58px);line-height:1.05;margin:0 0 14px;background:linear-gradient(90deg,#fff,#a5b4fc,#c4b5fd);-webkit-background-clip:text;color:transparent}.hero p{color:#94a3b8;line-height:1.6}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:#111827d4;backdrop-filter:blur(18px);border:1px solid #ffffff14;border-radius:22px;padding:24px;box-shadow:0 25px 70px #0005}.title{display:flex;align-items:center;gap:10px;margin-bottom:18px}.num{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:#6366f126;color:#a5b4fc;font-weight:700}.label{display:block;color:#94a3b8;font-size:13px;margin:0 0 8px}textarea,input,select{width:100%;border:1px solid #ffffff14;outline:0;border-radius:13px;background:#020617b8;color:#f8fafc;padding:13px 14px}textarea{height:280px;resize:vertical;line-height:1.5}input:focus,textarea:focus,select:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f11f}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}button{border:0;color:white;font-weight:700;cursor:pointer}.primary{width:100%;margin-top:14px;padding:14px;border-radius:13px;background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 10px 30px #6366f140}.primary:disabled{opacity:.55;cursor:not-allowed}.message{display:none;margin-top:12px;padding:12px;border-radius:10px;font-size:13px}.message.show{display:block}.error{background:#ef44441a;color:#fca5a5;border:1px solid #ef444433}.success{background:#22c55e1a;color:#86efac;border:1px solid #22c55e33}.pinbox{display:none;text-align:center;margin-top:18px;padding:18px;border-radius:15px;background:#6366f112;border:1px solid #6366f130}.pinbox.show{display:block}.pin{font-size:42px;font-weight:800;letter-spacing:8px;color:#c4b5fd;margin:8px}.secondary{padding:9px 15px;border-radius:9px;background:#ffffff0d;border:1px solid #ffffff14}.muted{font-size:12px;color:#94a3b8}.pininput{text-align:center;font-size:30px;letter-spacing:7px;font-weight:800;margin-bottom:0}.result{display:none;margin-top:18px}.result.show{display:block}.resulthead{display:flex;justify-content:space-between;margin-bottom:8px}.output{white-space:pre-wrap;word-break:break-word;max-height:450px;overflow:auto;padding:16px;background:#020617c9;border:1px solid #ffffff14;border-radius:13px;font-family:ui-monospace,Consolas,monospace;line-height:1.6;font-size:14px}.info{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.info div{padding:16px;border:1px solid #ffffff0d;background:#ffffff05;border-radius:14px}.info small{color:#94a3b8;line-height:1.5}footer{text-align:center;color:#64748b;font-size:12px;margin-top:28px}@media(max-width:780px){.grid,.info{grid-template-columns:1fr}.online{display:none}}@media(max-width:480px){.row{grid-template-columns:1fr}.card{padding:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand"><div class="logo">↗</div><div><b>TempShear</b><small>Temporary content sharing</small></div></div>
+  <div class="online"><span class="dot"></span>Supabase connected</div>
+</header>
+
+<section class="hero">
+<h1>Share anything.<br>Temporarily.</h1>
+<p>Share text or code with a secure 6-digit PIN.</p>
+</section>
+
+<div class="grid">
+<section class="card">
+<div class="title"><div class="num">1</div><h3>Share content</h3></div>
+<label class="label">Content</label>
+<textarea id="content" maxlength="1000000" placeholder="Paste text, code, JSON, notes..."></textarea>
+<div class="row">
+<div><label class="label">Type</label><select id="type"><option value="text">Text</option><option value="code">Code</option><option value="json">JSON</option><option value="markdown">Markdown</option></select></div>
+<div><label class="label">Expires after</label><select id="ttl"><option value="60">1 minute</option><option value="300">5 minutes</option><option value="600" selected>10 minutes</option><option value="1800">30 minutes</option><option value="3600">1 hour</option><option value="21600">6 hours</option><option value="86400">24 hours</option><option value="604800">7 days</option></select></div>
+</div>
+<button class="primary" id="share">Generate 6-Digit PIN</button>
+<div id="sendMsg" class="message"></div>
+<div id="pinbox" class="pinbox">
+<div class="muted">Give this PIN to the receiver</div>
+<div id="pin" class="pin">000000</div>
+<button class="secondary" id="copyPin">Copy PIN</button>
+<div id="expires" class="muted" style="margin-top:9px"></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title"><div class="num">2</div><h3>Receive content</h3></div>
+<label class="label">6-digit PIN</label>
+<input id="receivePin" class="pininput" inputmode="numeric" maxlength="6" placeholder="000000">
+<button class="primary" id="receive">Receive Content</button>
+<div id="receiveMsg" class="message"></div>
+<div id="result" class="result">
+<div class="resulthead"><b>Received content</b><button class="secondary" id="copyContent">Copy</button></div>
+<div id="output" class="output"></div>
+</div>
+</section>
+</div>
+
+<div class="info">
+<div><b>🔢 One PIN</b><br><small>Every share receives a random 6-digit PIN.</small></div>
+<div><b>⏱️ Custom expiry</b><br><small>Choose how long unused content stays available.</small></div>
+<div><b>🗑️ One-time read</b><br><small>Reading the content consumes and deletes the share.</small></div>
+</div>
+<footer>TempShear • Powered by Supabase</footer>
+</div>
+
+<script>
+/* IMPORTANT: use window.supabase here.
+   The previous version had a JavaScript variable-name collision. */
+const SUPABASE_URL = "https://rzgpbyqwjqkrzaqyhxqf.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_IIu2sqzz7jCyL5sZucJu4A_o0wYzzGV";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+const $ = id => document.getElementById(id);
+
+function msg(el, text, type) {
+  el.textContent = text;
+  el.className = "message show " + type;
+}
+function clearMsg(el) {
+  el.textContent = "";
+  el.className = "message";
+}
+
+$("share").onclick = async () => {
+  clearMsg($("sendMsg"));
+  $("pinbox").classList.remove("show");
+
+  const text = $("content").value.trim();
+  const ttl = Number($("ttl").value);
+  const type = $("type").value;
+
+  if (!text) {
+    msg($("sendMsg"), "Please enter some content first.", "error");
+    return;
+  }
+
+  $("share").disabled = true;
+  $("share").textContent = "Generating...";
+
+  try {
+    const { data, error } = await db.rpc("create_code_share", {
+      p_content: text,
+      p_content_type: type,
+      p_ttl_seconds: ttl
+    });
+
+    if (error) throw error;
+    if (!data || !data.length) throw new Error("Supabase returned no PIN.");
+
+    $("pin").textContent = data[0].pin;
+    $("expires").textContent =
+      "Expires: " + new Date(data[0].expires_at).toLocaleString();
+    $("pinbox").classList.add("show");
+    msg($("sendMsg"), "Share created successfully.", "success");
+    $("content").value = "";
+  } catch (e) {
+    console.error("CREATE ERROR:", e);
+    msg($("sendMsg"), e.message || "Could not create share.", "error");
+  } finally {
+    $("share").disabled = false;
+    $("share").textContent = "Generate 6-Digit PIN";
+  }
+};
+
+$("copyPin").onclick = async () => {
+  await navigator.clipboard.writeText($("pin").textContent);
+  $("copyPin").textContent = "Copied!";
+  setTimeout(() => $("copyPin").textContent = "Copy PIN", 1200);
+};
+
+$("receivePin").oninput = () => {
+  $("receivePin").value =
+    $("receivePin").value.replace(/\D/g, "").slice(0, 6);
+};
+
+$("receive").onclick = async () => {
+  clearMsg($("receiveMsg"));
+  $("result").classList.remove("show");
+
+  const pin = $("receivePin").value.trim();
+
+  if (!/^\d{6}$/.test(pin)) {
+    msg($("receiveMsg"), "Enter a valid 6-digit PIN.", "error");
+    return;
+  }
+
+  $("receive").disabled = true;
+  $("receive").textContent = "Checking...";
+
+  try {
+    const { data, error } = await db.rpc("consume_code_share", {
+      p_pin: pin
+    });
+
+    if (error) {
+      if ((error.message || "").includes("INVALID_PIN")) {
+        msg($("receiveMsg"), "Invalid PIN or the share has expired.", "error");
+        return;
+      }
+      throw error;
+    }
+
+    if (!data || !data.length) {
+      msg($("receiveMsg"), "Invalid PIN or the share has expired.", "error");
+      return;
+    }
+
+    $("output").textContent = data[0].content;
+    $("result").classList.add("show");
+    $("receivePin").value = "";
+    msg($("receiveMsg"),
+        "Content received. This PIN has now been consumed.",
+        "success");
+  } catch (e) {
+    console.error("RECEIVE ERROR:", e);
+    msg($("receiveMsg"), e.message || "Could not receive content.", "error");
+  } finally {
+    $("receive").disabled = false;
+    $("receive").textContent = "Receive Content";
+  }
+};
+
+$("receivePin").onkeydown = e => {
+  if (e.key === "Enter") $("receive").click();
+};
+
+$("copyContent").onclick = async () => {
+  await navigator.clipboard.writeText($("output").textContent);
+  $("copyContent").textContent = "Copied!";
+  setTimeout(() => $("copyContent").textContent = "Copy", 1200);
+};
+</script>
+</body>
+</html>
